@@ -1,6 +1,6 @@
 import processing.serial.*;
 PImage fondo,mu,pincel,titulo,barra, fondo1;
-int r,g,b,x,y,z,u,c=0;
+int r,g,b,x,y,z,u,c=0,t,bb,dib;
 String dato;  
 int mouseX_ant=350, mouseY_ant=320; //rangos en los que empiezan los ejes en el acelerometro
 Serial myPort;
@@ -33,6 +33,7 @@ image(pincel, 20,400,100,200);
 image(barra, 70,510,1180,150);
 //colores
   ellipse(300,590,30,30); //color negro
+  //fill(#FF0000);
    fill(255,0,0);
   ellipse(350,590,30,30);// color rojo
    fill(255,255,0); 
@@ -83,13 +84,28 @@ image(barra, 70,510,1180,150);
 void serialEvent(Serial myPort){
      dato = myPort.readString().trim();
      String[] list= split(dato,',');
-    if(dato!=null){
+     
+     t=list.length;
+   //print(dato);
+    if(t==5){
    //declarar variables espacilaes y de color
     x = int(list[0]);
     y = int(list[1]);
-    z= int(list[2]);
-    u= int(list[3]);
-  //seleccionar colores
+    //z= int(list[2]); / aun no tomamos el valor z haciendo pruebas para el 2D
+    u= int(list[2]);
+    bb= int(list[3]);
+    dib= int(list[4]);
+    print("x=");
+    println(x);
+    print("y=");
+    println(y);
+    print("u=");
+    println(u);
+    print("bb=");
+    println(bb);
+    print("dib=");
+    println(dib);
+    //seleccionar colores
   if( u==1){
     //color negro
     if(c==0){
@@ -182,17 +198,21 @@ void serialEvent(Serial myPort){
   r=255; 
   g=160;
   b=122;
+  c=-1;
  }
+ 
+  c++;
+ } //final if colores
  //Borrador
- else if(c==15)
+ if(bb==1)
   {  
    fill(255);
    rect(249,0,1200,551);
   }
-  c++;
- } //final if colores
+ 
  //Dibujar
- if( (x > 249 && x < 1200 ) && (y > 0 && y < 551) )
+ if(dib==0){
+ if( (x > 270 && x < 1200 ) && (y > 285 && y < 551) )
      {
      stroke(r,g,b); 
      line(mouseX_ant, mouseY_ant, x, y);
@@ -200,5 +220,6 @@ void serialEvent(Serial myPort){
      mouseY_ant = y;
      }  
    stroke(0);
+ }
  }
 }
