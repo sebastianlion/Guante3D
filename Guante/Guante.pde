@@ -1,14 +1,14 @@
 import processing.serial.*;
 PImage fondo,mu,pincel,titulo,barra, fondo1;
-int r,g,b,x,y,z,u,c=0,t,bb,dib;
+int r,g,b,x,y,z,u,c=0,t,bb,dib,cubo, roll, pitch;
 String dato;  
-int mouseX_ant=350, mouseY_ant=320; //rangos en los que empiezan los ejes en el acelerometro
+int mouseX_ant=700, mouseY_ant=200; //rangos en los que empiezan los ejes en el acelerometro
 Serial myPort;
 void setup()
 {
- 
+  size(1200,650,P3D);
   background(255);
-  size(1200,650);
+ 
   myPort= new Serial(this,Serial.list()[0],9600);
   myPort.clear();
   
@@ -33,7 +33,6 @@ image(pincel, 20,400,100,200);
 image(barra, 70,510,1180,150);
 //colores
   ellipse(300,590,30,30); //color negro
-  //fill(#FF0000);
    fill(255,0,0);
   ellipse(350,590,30,30);// color rojo
    fill(255,255,0); 
@@ -65,48 +64,98 @@ image(barra, 70,510,1180,150);
    fill(255);
   ellipse(1050,590,30,30);//borrador
 
- //if(mousePressed)
- //{
-   //ellipse(mouseX,mouseY,5,5);
-  
- //} 
-}
+  //Cubo
+ if(cubo==0)
+    {
+     background(255);
+     pushMatrix(); 
+     translate(width/2, 300);
+     rotateX(x*PI/180.0);
+     rotateY(y*PI/180.0);
+    
+     scale(100);
+  beginShape(QUADS);
 
-//void mousePressed() {
-  //Seleccionar colores
- // color negro
- 
- //else {
-   //mouseX_ant = x;
-   //mouseY_ant = y;
- //}  
-//} 
+  fill(0, 255, 0); vertex(-1,  1,  1);
+  fill(0, 255, 0); vertex( 1,  1,  1);
+  fill(0, 255, 0); vertex( 1, -1,  1);
+  fill(0, 255, 0); vertex(-1, -1,  1);
+
+  fill(0, 255, 255); vertex( 1,  1,  1);
+  fill(0, 255, 255); vertex( 1,  1, -1);
+  fill(0, 255, 255); vertex( 1, -1, -1);
+  fill(0, 255, 255); vertex( 1, -1,  1);
+
+
+  fill(255, 0, 255); vertex( 1,  1, -1);
+  fill(255, 0, 255); vertex(-1,  1, -1);
+  fill(255, 0, 255); vertex(-1, -1, -1);
+  fill(255, 0, 255); vertex( 1, -1, -1);
+
+  fill(255, 255, 0); vertex(-1,  1, -1);
+  fill(255, 255, 0); vertex(-1,  1,  1);
+  fill(255, 255, 0); vertex(-1, -1,  1);
+  fill(255, 255, 0); vertex(-1, -1, -1);
+
+
+  fill(255, 0, 0); vertex(-1,  1, -1);
+  fill(255, 0, 0); vertex( 1,  1, -1);
+  fill(255, 0, 0); vertex( 1,  1,  1);
+  fill(255, 0, 0); vertex(-1,  1,  1);
+
+
+  fill(0, 0, 255); vertex(-1, -1, -1);
+  fill(0, 0, 255); vertex( 1, -1, -1);
+  fill(0, 0, 255); vertex( 1, -1,  1);
+  fill(0, 0, 255); vertex(-1, -1,  1);
+
+  endShape();
+
+  popMatrix(); 
+     
+     
+    }
+  
+ //Dibujar
+ if(dib==0){
+ if( (x > 270 && x < 1200 ) && (y > 0 && y < 551) )
+     {
+       translate(x+150,y);
+     fill(r,g,b); 
+     //line(mouseX_ant, mouseY_ant, x, y);
+     //mouseX_ant = x;
+     //mouseY_ant = y;
+     rect(5,5,5,5);
+     
+     }  
+   stroke(0);
+ }
+    //Borrador
+ if(bb==1)
+  {  
+   fill(255);
+   background(255);
+  }
+}
+//Evento
 void serialEvent(Serial myPort){
      dato = myPort.readString().trim();
      String[] list= split(dato,',');
      
      t=list.length;
-   //print(dato);
-    if(t==5){
+   
+    if(t==8){
    //declarar variables espacilaes y de color
     x = int(list[0]);
     y = int(list[1]);
-    //z= int(list[2]); / aun no tomamos el valor z haciendo pruebas para el 2D
     u= int(list[2]);
     bb= int(list[3]);
-    dib= int(list[4]);
-    print("x=");
-    println(x);
-    print("y=");
-    println(y);
-    print("u=");
-    println(u);
-    print("bb=");
-    println(bb);
-    print("dib=");
-    println(dib);
+    cubo=int(list[4]);
+    dib= int(list[5]);
+    pitch= int(list[6]);
+    roll= int(list[7]);
     //seleccionar colores
-  if( u==1){
+   if( u==1){
     //color negro
     if(c==0){
      r=0; 
@@ -203,23 +252,6 @@ void serialEvent(Serial myPort){
  
   c++;
  } //final if colores
- //Borrador
- if(bb==1)
-  {  
-   fill(255);
-   rect(249,0,1200,551);
-  }
  
- //Dibujar
- if(dib==0){
- if( (x > 270 && x < 1200 ) && (y > 285 && y < 551) )
-     {
-     stroke(r,g,b); 
-     line(mouseX_ant, mouseY_ant, x, y);
-     mouseX_ant = x;
-     mouseY_ant = y;
-     }  
-   stroke(0);
- }
  }
 }
